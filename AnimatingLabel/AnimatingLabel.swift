@@ -1,26 +1,38 @@
 //
-//  AnimatingLabel.swift
-//  AnimatingLabel
+// AnimatingLabel.swift
+// AnimatingLabel
 //
-//  Created by Paweł Sękara on 23.11.2016.
-//  Copyright © 2016 Codewise sp. z o.o. sp. K. All rights reserved.
+// Created by Paweł Sękara on 23.11.2016.
 //
+// Copyright 2016 Codewise sp. z o.o. Sp. K.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 import Foundation
 import UIKit
 
-protocol TextContainable: class {
+public protocol TextContainable: class {
     var text: String? { get set }
 }
 
-protocol DigitAnimatable: TextContainable {
+public protocol DigitAnimatable: TextContainable {
     
     func animate(to value: Double, duration: Double, formatter: NumberFormatter?, easingOption: EasingOption)
 }
 
-extension DigitAnimatable {
+public extension DigitAnimatable {
     
-    func animate(to value: Double, duration: Double = 1, formatter: NumberFormatter? = nil, easingOption: EasingOption = .easeInOut) {
+    public func animate(to value: Double, duration: Double = 1, formatter: NumberFormatter? = nil, easingOption: EasingOption = .easeInOut) {
         
         let numberFormatter: NumberFormatter
         if let formatter = formatter {
@@ -48,21 +60,21 @@ extension UILabel: DigitAnimatable {}
 //MARK: - Implementation
 
 
-class CustomAnimator: NSObject {
-    var timer: CADisplayLink?
+open class CustomAnimator: NSObject {
+    private var timer: CADisplayLink?
     
-    var lastUpdate: TimeInterval
-    var progress: TimeInterval = 0
-    var duration: TimeInterval
+    open private(set) var lastUpdate: TimeInterval
+    open private(set) var progress: TimeInterval = 0
+    open private(set) var duration: TimeInterval
     
-    var update: ((Double) -> Void)
-    var completion: ((Void) -> Void)?
+    open var update: ((Double) -> Void)
+    open var completion: ((Void) -> Void)?
     
-    var easingOption: EasingOption
+    open private(set) var easingOption: EasingOption
     
     
     @discardableResult
-    init(duration: TimeInterval, easingOption: EasingOption = .easeInOut, update: @escaping (Double) -> Void, completion: ((Void) -> Void)? = nil) {
+    public init(duration: TimeInterval, easingOption: EasingOption = .easeInOut, update: @escaping (Double) -> Void, completion: ((Void) -> Void)? = nil) {
         self.lastUpdate = Date.timeIntervalSinceReferenceDate
         self.duration = duration
         self.update = update
@@ -83,7 +95,7 @@ class CustomAnimator: NSObject {
         self.update(0)
     }
     
-    @objc(tick:) func tick(timer: Timer) {
+    @objc(tick:) open func tick(timer: Timer) {
         let now = Date.timeIntervalSinceReferenceDate
         self.progress += now - self.lastUpdate
         self.lastUpdate = now
@@ -100,15 +112,15 @@ class CustomAnimator: NSObject {
     }
 }
 
-enum EasingOption {
+public enum EasingOption {
     case linear
     case easeIn
     case easeOut
     case easeInOut
 }
 
-extension EasingOption {
-    func ease(_ t: Double) -> Double {
+public extension EasingOption {
+    public func ease(_ t: Double) -> Double {
         switch self {
         case .linear:
             return t
